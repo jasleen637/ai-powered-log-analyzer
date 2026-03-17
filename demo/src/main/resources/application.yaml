@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: log-analyzer
+
+  ai:
+    openai:
+      api-key: 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
+
+
+server:
+  port: 8081
