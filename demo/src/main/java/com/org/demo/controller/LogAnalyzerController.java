@@ -17,12 +17,12 @@ public class LogAnalyzerController {
     @Autowired
     private LogAnalyzerService logAnalyzerService;
 
-    @PostMapping("/analyze-logs")
+    @PostMapping("/logs")
     public String analyzeLogs(@RequestBody String logs){
         return logAnalyzerService.analyzeLogs(logs);
     }
 
-    @PostMapping("/analyze-file")
+    @PostMapping("/file")
     public String uploadAnalyzeLogs(@RequestParam MultipartFile file) throws IOException {
         return logAnalyzerService.analyzeFile(file);
     }
