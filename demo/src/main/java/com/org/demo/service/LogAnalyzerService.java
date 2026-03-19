@@ -3,6 +3,10 @@ package com.org.demo.service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class LogAnalyzerService {
@@ -15,7 +19,6 @@ public class LogAnalyzerService {
     }
 
     public String analyzeLogs(String logs){
-
         String prompt = """
             Analyze the following logs and provide:
             1. Summary of the issue
@@ -30,5 +33,10 @@ public class LogAnalyzerService {
                 .user(prompt)
                 .call()
                 .content();
+    }
+
+    public String analyzeFile(MultipartFile file) throws IOException {
+        String logs = new String(file.getBytes(), StandardCharsets.UTF_8);
+        return analyzeLogs(logs);
     }
 }
