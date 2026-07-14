@@ -10,9 +10,13 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
-import { analyzeLogs } from "../service/api";
+import { chat } from "../service/api";
 
-function MessageInput({ addMessage, updateMessage }) {
+function MessageInput({
+  messages,
+  addMessage,
+  updateMessage,
+}) {
   const [message, setMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -40,6 +44,18 @@ function MessageInput({ addMessage, updateMessage }) {
     const currentMessage = message;
     const currentFile = selectedFile;
 
+    // Conversation to send to backend
+    const conversation = [
+      ...messages.map((msg) => ({
+        role: msg.sender === "user" ? "user" : "assistant",
+        content: msg.text,
+      })),
+      {
+        role: "user",
+        content: currentMessage,
+      },
+    ];
+
     // Show user message immediately
     addMessage({
       id: Date.now(),
@@ -48,7 +64,7 @@ function MessageInput({ addMessage, updateMessage }) {
       status: "completed",
     });
 
-    // Add "Thinking..." message
+    // Show thinking indicator
     const botId = Date.now() + 1;
 
     addMessage({
@@ -58,7 +74,7 @@ function MessageInput({ addMessage, updateMessage }) {
       status: "loading",
     });
 
-    // Clear input immediately
+    // Clear input
     setMessage("");
     setSelectedFile(null);
 
@@ -69,15 +85,16 @@ function MessageInput({ addMessage, updateMessage }) {
     try {
       const formData = new FormData();
 
-      if (currentMessage.trim()) {
-        formData.append("logs", currentMessage);
-      }
+      formData.append(
+        "conversation",
+        JSON.stringify(conversation)
+      );
 
       if (currentFile) {
         formData.append("image", currentFile);
       }
 
-      const response = await analyzeLogs(formData);
+      const response = await chat(formData);
 
       const analysis = response.analysis;
 
@@ -97,21 +114,24 @@ ${analysis.severity}
 💡 Recommendations
 
 ${analysis.recommendations
-        .map((item) => `• ${item}`)
-        .join("\n")}
+  .map((item) => `• ${item}`)
+  .join("\n")}
 `;
 
       updateMessage(botId, {
         text: formattedResponse.trim(),
         status: "completed",
       });
+
     } catch (error) {
+
       console.error(error);
 
       updateMessage(botId, {
         text: "❌ Something went wrong while analyzing your request.",
         status: "completed",
       });
+
     }
   };
 

@@ -2,13 +2,15 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:8000",
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
 });
 
-export const analyzeLogs = async (formData) => {
-  const response = await api.post("/analyze", formData);
+export const chat = async (formData) => {
+  const response = await api.post("/chat", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
   return response.data;
 };
 

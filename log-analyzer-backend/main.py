@@ -1,9 +1,10 @@
+import json
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from services.gemini_service import analyze_logs
+from services.gemini_service import analyze_chat
 from services.ocr_service import extract_text
 
 app = FastAPI(
@@ -12,7 +13,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -26,35 +26,43 @@ app.add_middleware(
 async def home():
     return {
         "status": "running",
-        "message": "AI Log Analyzer Backend is running 🚀",
+        "message": "AI Log Analyzer Backend is running 🚀"
     }
 
 
 @app.get("/health")
 async def health():
     return {
-        "status": "healthy",
+        "status": "healthy"
     }
 
 
-@app.post("/analyze")
-async def analyze(
-        logs: Optional[str] = Form(None),
+@app.post("/chat")
+async def chat(
+        conversation: str = Form(...),
         image: Optional[UploadFile] = File(None),
 ):
-    extracted_text = logs or ""
+    # Parse conversation JSON
+    messages = json.loads(conversation)
 
-    # OCR (placeholder for now)
+    # OCR
     if image:
         image_bytes = await image.read()
-        extracted_text += extract_text(image_bytes)
 
-    # Gemini Analysis
-    analysis = analyze_logs(extracted_text)
+        extracted_text = extract_text(image_bytes)
+
+        if extracted_text:
+
+            # Append OCR text to latest user message
+            messages[-1]["content"] += (
+                    "\n\nOCR Extracted Text:\n"
+                    + extracted_text
+            )
+
+    # Gemini
+    analysis = analyze_chat(messages)
 
     return {
         "status": "success",
-        "logs_provided": logs is not None,
-        "image_provided": image is not None,
         "analysis": analysis,
     }

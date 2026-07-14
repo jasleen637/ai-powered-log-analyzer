@@ -1,76 +1,223 @@
-# AI Interactive Log Analyzer
+# 🤖 AI Interactive Log Analyzer
 
-An intelligent, chat-based tool that helps users analyze application logs interactively. Users can paste logs directly or upload images of log files, and the system automatically extracts text using OCR, classifies and aggregates log entries, and provides actionable insights powered by an LLM.
+An AI-powered conversational log analysis assistant that helps developers understand application logs, stack traces, and error screenshots.
 
-## Features
+Users can paste logs directly or upload screenshots of logs, and the application automatically extracts text using OCR, analyzes the issue using Google Gemini, and provides structured root cause analysis with actionable recommendations. The assistant also supports follow-up questions, allowing users to have a natural conversation about the detected issues.
 
-- **Text Log Input**: Paste logs directly into the chat interface
-- **Image Upload**: Upload screenshots or log images for OCR-based text extraction
-- **AI-Powered Analysis**: Contextual root-cause detection and troubleshooting suggestions using Google Gemini
-- **Interactive Chat**: Ask follow-up questions about patterns, errors, and possible fixes
-- **Visual Insights**: Charts showing error trends, severity distribution, and time-based patterns
-- **Session History**: Save and review analysis sessions
+---
 
-## Tech Stack
+## ✨ Features
 
-- **Frontend**: React
-- **Backend**: FastAPI, Python
-- **OCR**: pytesseract
-- **Data Processing**: pandas
-- **Visualization**: matplotlib
-- **AI/LLM**: Google Gemini
+### 💬 Conversational AI Chat
+- Chat-based interface for analyzing application logs
+- Ask follow-up questions about previous responses
+- Conversation history persists using browser session storage
 
-## Installation
+### 📄 Log Analysis
+- Paste application logs directly into the chat
+- Analyze Java, Spring Boot, Docker, Kubernetes, PostgreSQL and other common backend logs
+- Detect probable root cause
+- Identify issue severity
+- Generate troubleshooting recommendations
+
+### 🖼 OCR Support
+- Upload screenshots containing logs or error messages
+- Extract text using Tesseract OCR
+- Automatically combine OCR output with user prompts before analysis
+
+### 🤖 AI-Powered Insights
+Google Gemini provides:
+
+- Issue summary
+- Root cause analysis
+- Severity assessment
+- Actionable recommendations
+
+### 💾 Session Persistence
+- Conversation is stored using browser session storage
+- Refreshing the page preserves the current chat
+
+---
+
+# 🏗 Architecture
+
+```
+                React + Material UI
+                        │
+                        ▼
+              Chat Conversation
+                        │
+                        ▼
+                 FastAPI Backend
+                        │
+          ┌─────────────┴─────────────┐
+          ▼                           ▼
+     OCR Service                Conversation
+ (Tesseract + Pillow)             History
+          │                           │
+          └─────────────┬─────────────┘
+                        ▼
+                  Google Gemini
+                        │
+                        ▼
+           Structured AI Response
+                        │
+                        ▼
+                  React Chat UI
+```
+
+---
+
+# 🛠 Tech Stack
+
+### Frontend
+
+- React
+- Material UI
+- Axios
 
 ### Backend
 
-1. Install dependencies:
+- FastAPI
+- Python
+
+### AI
+
+- Google Gemini API
+
+### OCR
+
+- Tesseract OCR
+- pytesseract
+- Pillow
+
+### Storage
+
+- Browser Session Storage
+
+---
+
+# 📂 Project Structure
+
+```
+AI-Interactive-Log-Analyzer/
+│
+├── frontend/
+│   ├── components/
+│   ├── service/
+│   └── App.jsx
+│
+├── backend/
+│   ├── services/
+│   │     ├── gemini_service.py
+│   │     └── ocr_service.py
+│   │
+│   ├── main.py
+│   └── requirements.txt
+│
+└── README.md
+```
+
+---
+
+# 🚀 Installation
+
+## Backend
+
+Install dependencies
 
 ```bash
-cd log-analyzer-backend
+cd backend
 pip install -r requirements.txt
 ```
 
-2. Set up environment variables:
+Create a `.env` file
 
-```bash
-export GEMINI_API_KEY="your_api_key"
+```text
+GEMINI_API_KEY=YOUR_API_KEY
 ```
 
-3. Run the server:
+Run the backend
 
 ```bash
 uvicorn main:app --reload
 ```
 
-### Frontend
+---
 
-1. Install dependencies:
+## Frontend
+
+Install dependencies
 
 ```bash
-cd log-analyzer-frontend
+cd frontend
 npm install
 ```
 
-2. Run the app:
+Run the frontend
 
 ```bash
 npm run dev
 ```
 
-## Usage
+Frontend:
 
-1. Start both backend and frontend servers
-2. Open the frontend in your browser
-3. Paste logs or upload images
-4. View AI-powered analysis and visualizations
-5. Ask follow-up questions in the chat
+```
+http://localhost:5173
+```
 
-## Architecture
+Backend:
 
-- Logs/images → Frontend → FastAPI backend
-- Backend → OCR (pytesseract) → Text extraction
-- Backend → pandas → Structured data
-- Backend → Google Gemini → Analysis & suggestions
-- Backend → matplotlib → Visualizations
-- Frontend → Display results
+```
+http://localhost:8000
+```
+
+Swagger API:
+
+```
+http://localhost:8000/docs
+```
+
+---
+
+# 💡 How It Works
+
+1. User enters logs or uploads a screenshot.
+2. OCR extracts text from uploaded images (if applicable).
+3. The conversation history and extracted text are sent to the FastAPI backend.
+4. Google Gemini analyzes the logs.
+5. The assistant returns:
+    - Summary
+    - Root Cause
+    - Severity
+    - Recommendations
+6. Users can ask follow-up questions in the same conversation.
+
+---
+
+# 📌 Example Use Cases
+
+- Analyze Java stack traces
+- Debug Spring Boot exceptions
+- Investigate Docker container failures
+- Understand Kubernetes pod errors
+- Troubleshoot PostgreSQL connection issues
+- Analyze screenshots of production logs
+
+---
+
+# 🔮 Future Enhancements
+
+- PDF log support
+- Advanced OCR preprocessing
+- Download analysis reports
+- Metrics visualization for structured logs
+- Support for additional LLM providers
+
+---
+
+# 👩‍💻 Author
+
+**Jasleen Kaur Wahi**
+
+Built as a full-stack AI application combining OCR, LLMs, and conversational interfaces to simplify application log analysis.
