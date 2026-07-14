@@ -13,15 +13,12 @@ An intelligent, chat-based tool that helps users analyze application logs intera
 
 ## Tech Stack
 
-- **Frontend**: React, TypeScript
+- **Frontend**: React
 - **Backend**: FastAPI, Python
 - **OCR**: pytesseract
 - **Data Processing**: pandas
 - **Visualization**: matplotlib
 - **AI/LLM**: Google Gemini
-- **DevOps**: Docker, GitHub Actions
-- **Database**: PostgreSQL (optional)
-
 
 ## Installation
 
