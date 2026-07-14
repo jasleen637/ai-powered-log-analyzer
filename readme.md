@@ -27,7 +27,7 @@ An intelligent, chat-based tool that helps users analyze application logs intera
 1. Install dependencies:
 
 ```bash
-cd backend
+cd log-analyzer-backend
 pip install -r requirements.txt
 ```
 
@@ -48,7 +48,7 @@ uvicorn main:app --reload
 1. Install dependencies:
 
 ```bash
-cd frontend
+cd log-analyzer-frontend
 npm install
 ```
 
