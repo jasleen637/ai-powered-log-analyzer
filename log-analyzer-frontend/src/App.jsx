@@ -1,9 +1,29 @@
+import { useState } from "react";
 import { Box } from "@mui/material";
+
 import Navbar from "./components/Navbar";
 import ChatWindow from "./components/ChatWindow";
 import MessageInput from "./components/MessageInput";
 
 function App() {
+  const [messages, setMessages] = useState([]);
+
+  // Add a new message
+  const addMessage = (message) => {
+    setMessages((prev) => [...prev, message]);
+  };
+
+  // Update an existing message (used for "Thinking...")
+  const updateMessage = (id, updates) => {
+    setMessages((prev) =>
+      prev.map((msg) =>
+        msg.id === id
+          ? { ...msg, ...updates }
+          : msg
+      )
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -15,9 +35,12 @@ function App() {
     >
       <Navbar />
 
-      <ChatWindow />
+      <ChatWindow messages={messages} />
 
-      <MessageInput />
+      <MessageInput
+        addMessage={addMessage}
+        updateMessage={updateMessage}
+      />
     </Box>
   );
 }

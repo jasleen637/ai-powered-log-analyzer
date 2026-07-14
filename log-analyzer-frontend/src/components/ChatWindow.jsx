@@ -1,8 +1,18 @@
 import { Box } from "@mui/material";
-import MessageBubble from "./MessageBubble";
-import messages from "../data/messages";
+import { useEffect, useRef } from "react";
 
-function ChatWindow() {
+import MessageBubble from "./MessageBubble";
+
+function ChatWindow({ messages }) {
+  const bottomRef = useRef(null);
+
+  // Automatically scroll whenever a new message is added
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages]);
+
   return (
     <Box
       sx={{
@@ -16,8 +26,12 @@ function ChatWindow() {
           key={message.id}
           sender={message.sender}
           text={message.text}
+          status={message.status}
         />
       ))}
+
+      {/* Invisible element used for auto-scroll */}
+      <div ref={bottomRef} />
     </Box>
   );
 }

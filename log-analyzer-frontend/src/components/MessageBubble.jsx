@@ -1,6 +1,11 @@
-import { Box, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
 
-function MessageBubble({ sender, text }) {
+function MessageBubble({ sender, text, status }) {
   const isUser = sender === "user";
 
   return (
@@ -15,11 +20,32 @@ function MessageBubble({ sender, text }) {
         elevation={2}
         sx={{
           p: 2,
-          maxWidth: "60%",
+          maxWidth: "65%",
           borderRadius: 4,
+          bgcolor: isUser ? "#1976d2" : "#ffffff",
+          color: isUser ? "#ffffff" : "#000000",
         }}
       >
-        <Typography>{text}</Typography>
+        {status === "loading" ? (
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <CircularProgress size={18} />
+            <Typography>Thinking...</Typography>
+          </Box>
+        ) : (
+          <Typography
+            sx={{
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {text}
+          </Typography>
+        )}
       </Paper>
     </Box>
   );

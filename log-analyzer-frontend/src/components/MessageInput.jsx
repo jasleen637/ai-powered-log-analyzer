@@ -12,7 +12,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 import { analyzeLogs } from "../service/api";
 
-function MessageInput() {
+function MessageInput({ addMessage, updateMessage }) {
   const [message, setMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
 
@@ -35,36 +35,83 @@ function MessageInput() {
   };
 
   const handleSend = async () => {
-    if (!message.trim() && !selectedFile) {
-      return;
+    if (!message.trim() && !selectedFile) return;
+
+    const currentMessage = message;
+    const currentFile = selectedFile;
+
+    // Show user message immediately
+    addMessage({
+      id: Date.now(),
+      sender: "user",
+      text: currentMessage || `📎 ${currentFile.name}`,
+      status: "completed",
+    });
+
+    // Add "Thinking..." message
+    const botId = Date.now() + 1;
+
+    addMessage({
+      id: botId,
+      sender: "bot",
+      text: "",
+      status: "loading",
+    });
+
+    // Clear input immediately
+    setMessage("");
+    setSelectedFile(null);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
 
     try {
       const formData = new FormData();
 
-      if (message.trim()) {
-        formData.append("logs", message);
+      if (currentMessage.trim()) {
+        formData.append("logs", currentMessage);
       }
 
-      if (selectedFile) {
-        formData.append("image", selectedFile);
+      if (currentFile) {
+        formData.append("image", currentFile);
       }
 
       const response = await analyzeLogs(formData);
 
-      console.log("Backend Response:", response);
+      const analysis = response.analysis;
 
-      // TODO:
-      // Add the response to your chat window
+      const formattedResponse = `
+📋 Summary
 
-      setMessage("");
-      setSelectedFile(null);
+${analysis.summary}
 
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+🔍 Root Cause
+
+${analysis.root_cause}
+
+⚠️ Severity
+
+${analysis.severity}
+
+💡 Recommendations
+
+${analysis.recommendations
+        .map((item) => `• ${item}`)
+        .join("\n")}
+`;
+
+      updateMessage(botId, {
+        text: formattedResponse.trim(),
+        status: "completed",
+      });
     } catch (error) {
-      console.error("Error calling /analyze:", error);
+      console.error(error);
+
+      updateMessage(botId, {
+        text: "❌ Something went wrong while analyzing your request.",
+        status: "completed",
+      });
     }
   };
 
@@ -117,7 +164,8 @@ function MessageInput() {
             disableUnderline: true,
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
               handleSend();
             }
           }}
